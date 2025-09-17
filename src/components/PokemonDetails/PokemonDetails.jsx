@@ -1,39 +1,63 @@
 
-import { useParams } from "react-router-dom";
-import "./PokemonDetails.css";
-import usePokemonDetails from "../../hooks/usePokemonDetails";
 
-function PokemonDetails() {
-  const { id } = useParams();
-  const [pokemon] = usePokemonDetails(id);
 
-  return (
-    <div className="pokemon-details-wrapper">
-      {pokemon.image && (
-        <img className="pokemon-details-image" src={pokemon.image} alt={pokemon.name} />
-      )}
-      <div className="pokemon-details-name"><span>{pokemon.name}</span></div>
 
-      <div className="pokemon-details-name">Height: {pokemon.height}</div>
-      <div className="pokemon-details-name">Width: {pokemon.weight}</div>
 
-      <div className="pokemon-details-types">
-        {pokemon.types && pokemon.types.map((p) => <div key={p}>{p}</div>)}
-      </div>
 
-      {pokemon.types && pokemon.similarPokemons && (
-        <div>
-          more {pokemon.types[0]} type pokemons
-          <ul>
-            {pokemon.similarPokemons.map((p) => (
-              // /type returns objects like { pokemon: { name, url }, slot }
-              <li key={p.pokemon.name}>{p.pokemon.name}</li>
-            ))}
-          </ul>
+
+
+// CSS imports
+import './PokemonDetails.css';
+
+import { Link } from 'react-router-dom';
+
+// Custom Hook
+import usePokemon from '../../hooks/usePokemon';
+import Pokemon from '../Pokemon/Pokemon';
+
+function PokemonDetails({ pokemonName }) {
+
+    const [pokemon, pokemonListState] = usePokemon(pokemonName);
+
+    return (
+        <>
+        <h1 className='pokedex-redirect'>
+            <Link to="/">
+                Pokedex
+            </Link>
+        </h1>
+        {pokemon && <div className='pokemon-details-wrapper'>
+            <div className='pokemon-detail-name'>
+                {pokemon.name}
+            </div>
+            <div className='pokemon-image'>
+                <img src={pokemon.image} />
+            </div>
+            <div className='pokemon-attr'>
+                <div>
+                    height: {pokemon.height}
+
+                </div>
+                <div>
+                weight: {pokemon.weight}
+
+                </div>
+            </div>
+            <div className='pokemon-types'>
+                <h1>Type:</h1> {pokemon.types.map(t => <span className='type' key={t.type.name}>{t.type.name}</span>)}
+            </div>
+        </div>}
+        <div className='similar-pokemons'>
+            <h2> Similar pokemons </h2>
+            <div className='pokemon-similar-boxes'>
+                {pokemonListState.pokemonList.length > 0 && 
+                     pokemonListState.pokemonList.map(pokemon => <Pokemon name={pokemon.name} key={pokemon.id} url={pokemon.image} id={pokemon.id} />)
+                }
+            </div>
         </div>
-      )}
-    </div>
-  );
+        </>
+
+    )
 }
 
 export default PokemonDetails;
